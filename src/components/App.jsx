@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./Navbar";
 import SalesSummary from "./SalesSummary";
 import AddCashTracker from "./AddCashTracker";
+import UploadExcel from "./UploadExcel";
 
 const App = () => {
   return (
@@ -13,6 +14,8 @@ const App = () => {
           <Route path="/" element={<SalesSummary />} />
           <Route path="/sales-summary" element={<SalesSummary />} />
           <Route path="/addCash" element={<AddCashTracker />} />
+          <Route path="/uploadExcel" element={<UploadExcel />} />
+
         </Routes>
       </div>
     </>
