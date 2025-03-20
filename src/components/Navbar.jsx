@@ -17,6 +17,13 @@ const Navbar = () => {
             <li className="nav-item">
               <Link className="nav-link" to="/addCash">Add Cash Tracker</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/lottery">Lottery Tracker</Link>
+            </li>
+            {/*           <Route path="/uploadExcel" element={<UploadExcel />} /> */}
+            <li className="nav-item">
+              <Link className="nav-link" to="/uploadExcel">Upload Excel</Link>
+            </li>
           </ul>
         </div>
       </div>

@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import SalesSummary from "./SalesSummary";
 import AddCashTracker from "./AddCashTracker";
 import UploadExcel from "./UploadExcel";
+import LotteryInventoryTracker from "./LotteryInventoryTracker";
 
 const App = () => {
   return (
@@ -15,6 +16,9 @@ const App = () => {
           <Route path="/sales-summary" element={<SalesSummary />} />
           <Route path="/addCash" element={<AddCashTracker />} />
           <Route path="/uploadExcel" element={<UploadExcel />} />
+          <Route path="/lottery" element={<LotteryInventoryTracker/>} />
+
+
 
         </Routes>
       </div>
