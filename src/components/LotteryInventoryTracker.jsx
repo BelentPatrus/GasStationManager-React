@@ -8,7 +8,7 @@ const LotteryInventoryTracker = () => {
   const [entryType, setEntryType] = useState(""); // "Morning" or "EOD"
   const [tickets, setTickets] = useState([]);
   const [openedTickets, setOpenedTickets] = useState([]);
-  const [previousEntryExists, setPreviousEntryExists] = useState(false);
+  const [morningCounts, setMorningCounts] = useState({});
   
   const ticketOptions = ["$2", "$3", "$5", "$10", "$20", "$30", "$50", "$100"];
 
@@ -26,12 +26,30 @@ const LotteryInventoryTracker = () => {
         setLotteryData(response.data);
         console.log("Fetched lottery data:", response.data);
         
+        // **🔴 Auto-populate morning counts if morningLogComplete is true 🔴**
+        if (response.data.morningLogComplete) {
+          setMorningCounts({
+            "$2": response.data.morningCount2,
+            "$3": response.data.morningCount3,
+            "$5": response.data.morningCount5,
+            "$10": response.data.morningCount10,
+            "$20": response.data.morningCount20,
+            "$30": response.data.morningCount30,
+            "$50": response.data.morningCount50,
+            "$100": response.data.morningCount100,
+          });
+        } else {
+          setMorningCounts({});
+        }
+        
       } else {
         setLotteryData(null);
+        setMorningCounts({});
       }
     } catch (error) {
       console.error("Error fetching sales data:", error);
       setLotteryData(null);
+      setMorningCounts({});
     }
   };
 
@@ -39,22 +57,8 @@ const LotteryInventoryTracker = () => {
     setSelectedDate(e.target.value);
   };
 
-  const handleEntryTypeChange = (e) => {
-    setEntryType(e.target.value);
-  };
-
-  const handleAddTicket = () => {
-    setTickets([...tickets, { type: "", count: "" }]);
-  };
-
   const handleAddOpenedTicket = () => {
     setOpenedTickets([...openedTickets, { type: "", count: "" }]);
-  };
-
-  const handleTicketChange = (index, key, value) => {
-    const newTickets = [...tickets];
-    newTickets[index][key] = value;
-    setTickets(newTickets);
   };
 
   const handleOpenedTicketChange = (index, key, value) => {
@@ -64,16 +68,12 @@ const LotteryInventoryTracker = () => {
   };
 
   const handleSubmit = () => {
-    if (!selectedDate || !entryType) {
-      alert("Please select a date and entry type.");
+    if (!selectedDate) {
+      alert("Please select a date.");
       return;
     }
 
-    if (!previousEntryExists) {
-      alert("Warning: The previous day's EOD count is missing!");
-    }
-
-    console.log("Submitting Data:", { selectedDate, entryType, tickets, openedTickets });
+    console.log("Submitting Data:", { selectedDate, tickets, openedTickets });
     // Send data to backend
   };
 
@@ -85,70 +85,54 @@ const LotteryInventoryTracker = () => {
           <label className="form-label">Select Date:</label>
           <input type="date" className="form-control" value={selectedDate} onChange={handleDateChange} />
         </div>
-        {/* <div className="mb-3">
-          <label className="form-label">Is this a Morning or EOD Count?</label>
-          <select className="form-control" value={entryType} onChange={handleEntryTypeChange}>
-            <option value="">Select...</option>
-            <option value="Morning">Morning Count</option>
-            <option value="EOD">End of Day Count</option>
-          </select>
-        </div> */}
 
-        {tickets.map((ticket, index) => (
-          <div key={index} className="mb-3 d-flex align-items-center">
-            <select
-              className="form-control me-2"
-              value={ticket.type}
-              onChange={(e) => handleTicketChange(index, "type", e.target.value)}
-            >
-              <option value="">Select Ticket Type</option>
-              {ticketOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-            <input
-              type="number"
-              className="form-control"
-              placeholder="Count"
-              value={ticket.count}
-              onChange={(e) => handleTicketChange(index, "count", e.target.value)}
-            />
-          </div>
-        ))}
-
-        <div className="d-flex justify-content-between mt-3">
-          <button className="btn btn-secondary" onClick={handleAddTicket}>Add Ticket</button>
-        </div>
-
-        {entryType === "EOD" && (
+        {/* 🔴 Morning Count Display 🔴 */}
+        {lotteryLogData?.morningLogComplete && (
           <div className="mt-4">
-            <h4>Tickets Opened During Shift</h4>
-            {openedTickets.map((ticket, index) => (
-              <div key={index} className="mb-3 d-flex align-items-center">
-                <select
-                  className="form-control me-2"
-                  value={ticket.type}
-                  onChange={(e) => handleOpenedTicketChange(index, "type", e.target.value)}
-                >
-                  <option value="">Select Ticket Type</option>
-                  {ticketOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
-                  ))}
-                </select>
+            <h4>Morning Count (Auto-Populated)</h4>
+            {ticketOptions.map((option) => (
+              <div key={option} className="mb-3 d-flex align-items-center">
+                <span className="me-2">{option}</span>
                 <input
                   type="number"
                   className="form-control"
-                  placeholder="Count"
-                  value={ticket.count}
-                  onChange={(e) => handleOpenedTicketChange(index, "count", e.target.value)}
+                  value={morningCounts[option] || 0}
+                  disabled
+                  style={{ backgroundColor: "#e9ecef", color: "#6c757d" }}
                 />
               </div>
             ))}
-            <div className="d-flex justify-content-between mt-3">
-              <button className="btn btn-warning" onClick={handleAddOpenedTicket}>Log Opened Ticket</button>
-            </div>
           </div>
         )}
+
+        {/* 🔴 EOD and Opened Ticket Entry 🔴 */}
+        <div className="mt-4">
+          <h4>Tickets Opened During Shift</h4>
+          {openedTickets.map((ticket, index) => (
+            <div key={index} className="mb-3 d-flex align-items-center">
+              <select
+                className="form-control me-2"
+                value={ticket.type}
+                onChange={(e) => handleOpenedTicketChange(index, "type", e.target.value)}
+              >
+                <option value="">Select Ticket Type</option>
+                {ticketOptions.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Count"
+                value={ticket.count}
+                onChange={(e) => handleOpenedTicketChange(index, "count", e.target.value)}
+              />
+            </div>
+          ))}
+          <div className="d-flex justify-content-between mt-3">
+            <button className="btn btn-warning" onClick={handleAddOpenedTicket}>Log Opened Ticket</button>
+          </div>
+        </div>
 
         <div className="d-flex justify-content-between mt-3">
           <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
