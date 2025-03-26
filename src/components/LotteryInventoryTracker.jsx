@@ -27,7 +27,7 @@ const LotteryInventoryTracker = () => {
         console.log("Fetched lottery data:", response.data);
         
         // **🔴 Auto-populate morning counts if morningLogComplete is true 🔴**
-        if (response.data.morningLogComplete) {
+        if (response.data.logComplete) {
           setMorningCounts({
             "$2": response.data.morningCount2,
             "$3": response.data.morningCount3,
@@ -87,7 +87,7 @@ const LotteryInventoryTracker = () => {
         </div>
 
         {/* 🔴 Morning Count Display 🔴 */}
-        {lotteryLogData?.morningLogComplete && (
+        {lotteryLogData?.logComplete && (
           <div className="mt-4">
             <h4>Morning Count (Auto-Populated)</h4>
             {ticketOptions.map((option) => (
@@ -105,7 +105,7 @@ const LotteryInventoryTracker = () => {
           </div>
         )}
 
-        {/* 🔴 EOD and Opened Ticket Entry 🔴 */}
+        {/* 🔴 New Morning Count 🔴 */}
         <div className="mt-4">
           <h4>Tickets Opened During Shift</h4>
           {openedTickets.map((ticket, index) => (
@@ -131,6 +131,7 @@ const LotteryInventoryTracker = () => {
           ))}
           <div className="d-flex justify-content-between mt-3">
             <button className="btn btn-warning" onClick={handleAddOpenedTicket}>Log Opened Ticket</button>
+            
           </div>
         </div>
 
