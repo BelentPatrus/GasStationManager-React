@@ -5,6 +5,7 @@ import SalesSummary from "./SalesSummary";
 import AddCashTracker from "./AddCashTracker";
 import UploadExcel from "./UploadExcel";
 import LotteryInventoryTracker from "./LotteryInventoryTracker";
+import LotteryInventoryTrackerSuccessPage from "./LotteryInventoryTrackerSuccessPage";
 
 const App = () => {
   return (
@@ -17,6 +18,8 @@ const App = () => {
           <Route path="/addCash" element={<AddCashTracker />} />
           <Route path="/uploadExcel" element={<UploadExcel />} />
           <Route path="/lottery" element={<LotteryInventoryTracker/>} />
+          <Route path="/lottery/:date/success" element={<LotteryInventoryTrackerSuccessPage/>} />
+
 
 
 

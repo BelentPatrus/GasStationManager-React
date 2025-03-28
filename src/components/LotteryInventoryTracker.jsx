@@ -5,10 +5,12 @@ import MorningCountDisplay from "./lotterycomponents/MorningCountDisplay";
 import OpenedTicketsDisplay from "./lotterycomponents/OpenedTicketsDisplay";
 import MorningCountInput from "./lotterycomponents/MorningCountInput";
 import OpenedTicketsInput from "./lotterycomponents/OpenedTicketsInput";
+import { useNavigate } from "react-router-dom";
 
 const ticketOptions = ["$2", "$3", "$5", "$10", "$20", "$30", "$50", "$100"];
 
 const LotteryInventoryTracker = () => {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState("");
   const [lotteryLogData, setLotteryData] = useState(null);
   const [morningCounts, setMorningCounts] = useState({});
@@ -52,6 +54,30 @@ const LotteryInventoryTracker = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    if (!selectedDate) {
+      alert("Please select a date.");
+      return;
+    }
+  
+    const requestData = {
+      date: selectedDate,
+      morningCounts,
+      openedTickets,
+    };
+  
+    try {
+      const response = await axios.post("http://localhost:8080/lottery/save", requestData);
+      // Navigate to success page after submission
+            // Navigate to success page with the selected date
+            navigate(`/lottery/${selectedDate}/success`);
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      alert("Failed to submit data. Please try again.");
+    }
+  };
+  
+
   const isLogComplete = () => lotteryLogData?.logComplete;
 
   return (
@@ -76,7 +102,7 @@ const LotteryInventoryTracker = () => {
         )}
 
         <div className="d-flex justify-content-between mt-3">
-          <button className="btn btn-primary">Submit</button>
+          <button className="btn btn-primary" onClick={handleSubmit} disabled={isLogComplete()}>Submit</button>
         </div>
       </div>
     </div>
