@@ -38,18 +38,25 @@ const LotteryInventoryTrackerSuccessPage = () => {
                   <th>Denomination</th>
                   <th>Yesterday's Morning Count</th>
                   <th>Yesterday's Reported Sales</th>
+                  <th>Yesterday's Reported Opened Tickets</th>
                   <th>Today's Morning Count</th>
+                  <th>Net Count</th>
+
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(lotteryReportData.yesterdayMorningCounts).map((denomination) => (
-                  <tr key={denomination}>
-                    <td>{denomination}</td>
-                    <td>{lotteryReportData.yesterdayMorningCounts[denomination] || 0}</td>
-                    <td>{lotteryReportData.yesterdayReportedSales?.[denomination] || 0}</td>
-                    <td>{lotteryReportData.todayMorningCounts[denomination] || 0}</td>
-                  </tr>
-                ))}
+                {Object.keys(lotteryReportData.yesterdayMorningCounts)
+                  .sort((a, b) => parseInt(a.replace("$", ""), 10) - parseInt(b.replace("$", ""), 10)) // Sort numerically
+                  .map((denomination) => (
+                    <tr key={denomination}>
+                      <td>{denomination}</td>
+                      <td>{lotteryReportData.yesterdayMorningCounts[denomination] || 0}</td>
+                      <td>{lotteryReportData.yesterdayReportedSales?.[denomination] || 0}</td>
+                      <td>{lotteryReportData.yesterdayOpenedTickets?.[denomination] || 0}</td>
+                      <td>{lotteryReportData.todayMorningCounts[denomination] || 0}</td>
+                      <td>{lotteryReportData.netCount[denomination] || 0}</td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
